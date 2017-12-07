@@ -1,16 +1,17 @@
 {% extends "layout.html" %}
 {% block content %}
+<body>
+  <div class="container">
+    <h1>Owasp Top 10 (2017)</h1>
 
-  <title>Owasp Top 10 (2017)</title>
+    <ol>
+      {% for route in routes %}
+        <li>
+          <a href="{{ url_for(route["endpoint"]) }}">{{ route["name"] }}</a>
+        </li>
+      {% endfor %}
+    </ol>
 
-  <h1>Owasp Top 10 (2017)</h1>
-
-  <ol>
-    {% for route in routes %}
-      <li>
-        <a href="{{ url_for(route["endpoint"]) }}">{{ route["name"] }}</a>
-      </li>
-    {% endfor %}
-  </ol>
-
+  </div>
+</body>
 {% endblock %}

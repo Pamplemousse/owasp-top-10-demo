@@ -17,7 +17,10 @@ def main():
         { 'name': 'Using Components with Known Vulnerabilities', 'endpoint': 'A9'},
         { 'name': 'Insufficient Logging and Monitoring'        , 'endpoint': 'A10'}
     ]
-    return render_template('main.html', routes=routes)
+
+    return render_template('main.html',
+                           title="Owasp Top Ten (2017)",
+                           routes=routes)
 
 # Injection
 @app.route('/A1')
@@ -32,7 +35,8 @@ def A2():
 # Sensitive Data Exposure
 @app.route('/A3')
 def A3():
-    return render_template('sensitive-data-exposure.html')
+    return render_template('sensitive-data-exposure.html',
+                           title="Sensitive Data Exposure")
 
 # XML External Entities (XEE)
 @app.route('/A4')
@@ -52,7 +56,8 @@ def A6():
 # Cross-Site Scripting (XSS)
 @app.route('/A7')
 def A7():
-    return 'A7'
+    return render_template('cross-site-scripting.html',
+                           title="Cross Site Scripting (XSS)")
 
 # Insecure Deserialization
 @app.route('/A8')
