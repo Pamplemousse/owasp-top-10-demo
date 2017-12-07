@@ -1,8 +1,9 @@
 from flask import Flask
-from flask import render_template, request
+from flask import render_template
 
 import vulns.A3 as A3_vuln
 import vulns.A2 as A2_vuln
+import vulns.A7 as A7_vuln
 
 app = Flask(__name__)
 
@@ -58,9 +59,13 @@ def A6():
 
 # Cross-Site Scripting (XSS)
 @app.route('/A7')
+@app.route('/A7/')
 def A7():
-    return render_template('cross-site-scripting.html',
-                           title="Cross Site Scripting (XSS)")
+    return A7_vuln.render()
+
+@app.route('/A7/<id>')
+def A7_with_id(id="identifiant-super-unique"):
+    return A7_vuln.render_with_id(id)
 
 
 # Insecure Deserialization

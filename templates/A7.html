@@ -1,0 +1,62 @@
+<script>
+(function() {
+  var _old_alert = window.alert;
+  window.alert = function() {
+    _old_alert.apply(window,arguments);
+    {# document.body.innerHTML += "<br>done alerting<br>"; #}
+    console.log("alert happened");
+  };
+})();
+</script>
+
+{% extends "layout.html" %}
+{% block content %}
+<body>
+  <div class="container">
+    <h1>{{ title }}</h1>
+
+    <div class="row">
+      <div class="alert alert-info col-md-12">
+        <h3>Qu'est-ce qu'une faille XSS ?</h3>
+
+        <p>
+          À travers un champ contrôlable (url ou formulaire par exemple), un attaquant peut injecter du code Javascript dans une page, qui sera interprétée par le navigateur.
+        </p>
+        <p>
+          Les conséquences d'une faille XSS peuvent être multiples : en faisant exécuter du code arbitraire par un client, un attaquant peut, entre autres : voler sa session, télécharger des logiciels malveillants, exécuter des opérations sur le site visé, etc.
+        </p>
+
+        <a href="https://www.owasp.org/index.php/Top_10_2017-A3-Cross-Site_Scripting_(XSS)">En savoir plus</a>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="row">
+      {% autoescape false %}
+      <p id="{{ id }}">Votre identifiant : {{ id }}</p>
+      {% endautoescape %}
+    </div>
+
+    <hr>
+
+    <div class="row">
+      <div class="col-md-6">
+        <button data-toggle="collapse" data-target="#hints" class="alert alert-info col-md-12">Indices</button>
+        <div id="hints" class="collapse alert alert-info col-md-12">
+          Ici, la faille à exploiter est de type DOM XSS, et le contenue s'injecte dans un champ ID grâce à un contrôle de paramètre à travers l'url.
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <button data-toggle="collapse" data-target="#solution" class="alert alert-success col-md-12">Voir la solution</button>
+        <div id="solution" class="collapse alert alert-success col-md-12">
+          <code>"onmouseover="alert('test')</code>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+{% endblock %}
+
