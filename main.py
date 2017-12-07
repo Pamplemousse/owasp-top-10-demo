@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import render_template
 
+import vulns.A8 as A8_vuln
 import vulns.A3 as A3_vuln
 import vulns.A2 as A2_vuln
 import vulns.A7 as A7_vuln
@@ -69,9 +70,10 @@ def A7_with_id(id="identifiant-super-unique"):
 
 
 # Insecure Deserialization
+@app.route('/A8/<page>', methods=['POST', 'GET'])
 @app.route('/A8')
-def A8():
-    return 'A8'
+def A8(page=None):
+    return A8_vuln.render(page)
 
 # Using Components With Known Vulnerabilities
 @app.route('/A9')

