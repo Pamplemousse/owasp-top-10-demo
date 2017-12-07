@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block content %}
+<body>
+  <div class="container">
+    <h1>Broken authentication</h1>
+
+    <div>
+      <p>Explications...</p>
+    </div>
+
+    <div>
+      <form action="?" method="POST" onsubmit="register();return false;">
+        Login: <input type="text" id="login" value=""/>
+        Password: <input type="password" id="password" value=""/>
+        <input class="button" type="submit" value="Register" />
+      </form>
+    </div>
+  </div>
+</body>
+{% endblock %}

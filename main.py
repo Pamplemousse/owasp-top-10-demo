@@ -2,6 +2,7 @@ from flask import Flask
 from flask import render_template, request
 
 import vulns.A3 as A3_vuln
+import vulns.A2 as A2_vuln
 
 app = Flask(__name__)
 
@@ -30,9 +31,9 @@ def A1():
     return 'A1'
 
 # Broken Authentication
-@app.route('/A2')
+@app.route('/A2', methods=["POST"])
 def A2():
-    return 'A2'
+    return A2_vuln.render()
 
 # Sensitive Data Exposure
 @app.route('/A3/<page>', methods=['GET', 'POST'])
