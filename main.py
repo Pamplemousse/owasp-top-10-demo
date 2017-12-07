@@ -1,6 +1,8 @@
 from flask import Flask
 from flask import render_template
 
+import vulns.A3 as A3_vuln
+
 app = Flask(__name__)
 
 @app.route('/')
@@ -35,8 +37,7 @@ def A2():
 # Sensitive Data Exposure
 @app.route('/A3')
 def A3():
-    return render_template('sensitive-data-exposure.html',
-                           title="Sensitive Data Exposure")
+    return A3_vuln.render()
 
 # XML External Entities (XEE)
 @app.route('/A4')
@@ -58,6 +59,7 @@ def A6():
 def A7():
     return render_template('cross-site-scripting.html',
                            title="Cross Site Scripting (XSS)")
+
 
 # Insecure Deserialization
 @app.route('/A8')
