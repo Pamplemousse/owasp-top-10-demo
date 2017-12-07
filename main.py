@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import render_template
+from flask import render_template, request
 
 import vulns.A3 as A3_vuln
 
@@ -35,9 +35,10 @@ def A2():
     return 'A2'
 
 # Sensitive Data Exposure
+@app.route('/A3/<page>', methods=['GET', 'POST'])
 @app.route('/A3')
-def A3():
-    return A3_vuln.render()
+def A3(page=None):
+    return A3_vuln.render(page)
 
 # XML External Entities (XEE)
 @app.route('/A4')
