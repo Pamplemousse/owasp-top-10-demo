@@ -14,7 +14,7 @@ def main():
     routes = [
         { 'implemented': True,  'name': 'Injection'                                  , 'endpoint': 'A1'},
         { 'implemented': True,  'name': 'Broken Authentication'                      , 'endpoint': 'A2'},
-        { 'implemented': True,  'name': 'Sensitive Data Exposure'                    , 'endpoint': 'A3'},
+        { 'implemented': False, 'name': 'Sensitive Data Exposure'                    , 'endpoint': 'A3'},
         { 'implemented': False, 'name': 'XML External Entities (XXE)'                , 'endpoint': 'A4'},
         { 'implemented': False, 'name': 'Broken Access Control'                      , 'endpoint': 'A5'},
         { 'implemented': False, 'name': 'Security Misconfiguration'                  , 'endpoint': 'A6'},
@@ -48,7 +48,7 @@ def A2(page=None):
 @app.route('/A3/<page>', methods=['GET', 'POST'])
 @app.route('/A3')
 def A3(page=None):
-    return A3_vuln.render(page)
+    return render_template('not_yet_implemented.html')
 
 # XML External Entities (XEE)
 @app.route('/A4')
