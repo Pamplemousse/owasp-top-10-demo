@@ -1,10 +1,11 @@
 from flask import Flask
 from flask import render_template
 
-import vulns.A8 as A8_vuln
-import vulns.A3 as A3_vuln
+import vulns.A1 as A1_vuln
 import vulns.A2 as A2_vuln
+import vulns.A3 as A3_vuln
 import vulns.A7 as A7_vuln
+import vulns.A8 as A8_vuln
 
 app = Flask(__name__)
 
@@ -29,8 +30,13 @@ def main():
 
 # Injection
 @app.route('/A1')
-def A1():
-    return 'A1'
+@app.route('/A1/<page>', methods=['POST'])
+def A1(page='users'):
+    return A1_vuln.render()
+
+@app.route('/A1/users.json', methods=['GET', 'POST'])
+def A1_api():
+    return A1_vuln.users_as_json()
 
 # Broken Authentication
 @app.route('/A2/<page>', methods=['GET', 'POST'])

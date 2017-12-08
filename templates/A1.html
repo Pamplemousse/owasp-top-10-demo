@@ -1,0 +1,96 @@
+<script>
+function search(){
+  $ = jQuery;
+
+  var year = document.getElementById("searchYear").value;
+
+  $.ajax("{{ url_for('A1') }}/users.json?year="+year, {
+    method: 'POST',
+  })
+  .done(function(results){
+    $(".result").remove();
+
+    $(results).each(function(){
+      var r = "<tr class='result'><td>"+this[1]+"</td>";
+      r += "<td>"+this[2]+"</td>";
+      r += "<td>"+this[3]+"</td></tr>";
+      $("#results").append(r);
+    });
+  })
+  .fail(function(err){
+    console.log(err);
+  });
+}
+</script>
+
+{% extends "layout.html" %}
+{% block content %}
+<body>
+  <div class="container">
+    <h1>{{ title }}</h1>
+
+    <div class="row">
+      <div class="alert alert-info col-md-12">
+        <h3>Qu'est-ce qu'une Injection ?</h3>
+
+        <p>
+          De manière générale, les injections sont des failles où grâce à une entrée non filtrée, un attaquant peut manipuler le flot logique de l'application.
+        </p>
+
+        <a target="_blank" href="https://www.owasp.org/index.php/Top_10_2017-A1-Injection">En savoir plus</a>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="row">
+      <form action="?" method="GET" onkeyup="search(); return false;">
+        <div class="form-group">
+          <label for="searchYear">Filtrer par année : </label>
+          <input onchange="search();" class="form-control" type="text" id="searchYear" value=""/>
+          <input class="btn" type="submit" value="Search"/>
+        </div>
+      </form>
+
+      <br><br>
+
+      <table class="table" id="results">
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Year of Birth</th>
+        </tr>
+        {% for user in users %}
+        <tr class="result">
+          <td>{{ user[1] }}</td>
+          <td>{{ user[2] }}</td>
+          <td>{{ user[3] }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+
+    <hr>
+
+    <div class="row">
+      <div class="col-md-6">
+        <button data-toggle="collapse" data-target="#hints" class="alert alert-info col-md-12">Indices</button>
+        <div id="hints" class="collapse alert alert-info col-md-12">
+          Ici, la faille à exploiter est une injection SQL. En permettant de filtrer les résultats sans valider la légitimité de l'input, le développeur permet à un attaquant rusé de récupérer les mots de passes des utilisateurs de la base de données.
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <button data-toggle="collapse" data-target="#solution" class="alert alert-success col-md-12">Voir la solution</button>
+        <div id="solution" class="collapse alert alert-success col-md-12">
+          En entrant le code suivant dans le champ de filtre, l'attaquant sélectionne tous les utilisateurs, puis effectue une UNION pour sélectionner les noms et les mots de passe des utilisateurs de la base, et enfin ordonne pour avoir ces résultats en premier.
+          <br/> <br/>
+          <code>%' OR 1=1 UNION SELECT last_name, last_name, password FROM users ORDER BY password DESC; --</code>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+{% endblock %}
+
