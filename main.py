@@ -33,9 +33,10 @@ def A1():
     return 'A1'
 
 # Broken Authentication
-@app.route('/A2', methods=["POST"])
-def A2():
-    return A2_vuln.render()
+@app.route('/A2/<page>', methods=['GET', 'POST'])
+@app.route('/A2')
+def A2(page=None):
+    return A2_vuln.render(page)
 
 # Sensitive Data Exposure
 @app.route('/A3/<page>', methods=['GET', 'POST'])

@@ -1,0 +1,30 @@
+
+
+
+{% extends "layout.html" %}
+{% block content %}
+<body>
+  <div class="container">
+    <h1>Broken authentication</h1>
+
+    <div>
+      <p>Explications...</p>
+    </div>
+
+    <div>
+        Bonjour {{ login }} </br>
+        Le hash est <span id="pass_hashed_id"> </span>
+   </div>
+  </div>
+</body>
+
+<script>
+
+console.log(document.cookie)
+
+document.getElementById("pass_hashed_id").innerHTML = "" + document.cookie
+
+</script>
+
+
+{% endblock %}
