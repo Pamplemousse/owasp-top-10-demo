@@ -4,13 +4,28 @@
   <div class="container">
     <h1>{{ title }}</h1>
 
-    <ol>
-      {% for route in routes %}
+    <hr>
+
+      Implemented: <span class="glyphicon glyphicon-ok"></span>
+      <br>
+      Not yet implemented: <span class="glyphicon glyphicon-remove"></span>
+
+    <hr>
+
+    <div class="row">
+      <ol>
+        {% for route in routes %}
         <li>
+          {% if route["implemented"] %}
+          <span class="glyphicon glyphicon-ok"></span>
+          {% else %}
+          <span class="glyphicon glyphicon-remove"></span>
+          {% endif %}
           <a href="{{ url_for(route["endpoint"]) }}">{{ route["name"] }}</a>
         </li>
-      {% endfor %}
-    </ol>
+        {% endfor %}
+      </ol>
+    </div>
 
   </div>
 </body>

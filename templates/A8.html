@@ -19,13 +19,17 @@
 
     <div class="row">
       <form method="POST" action="/A8/register">
-        Firstname: <input type="text" name="firstname" id="firstname" value=""/>
-        Lastname: <input type="text" name="lastname" id="lastname" value=""/>
-        <input type="submit" value="Login" />
+        <div class="form-group col-md-12">
+          <label>Firstname: <input type="text" name="firstname" id="firstname" value=""/></label>
+          <label>Lastname: <input type="text" name="lastname" id="lastname" value=""/></label>
+          <input type="submit" value="Login" />
+        </div>
       </form>
       <form action="/A8/login" method="POST">
-        ID: <input type="text" name="ID" id="ID" value=""/>
-        <input class="button" type="submit" value="Login" />
+        <div class="form-group col-md-12">
+          <label>ID: <input type="text" name="ID" id="ID" value=""/></label>
+          <input class="button" type="submit" value="Login" />
+        </div>
       </form>
     </div>
 
