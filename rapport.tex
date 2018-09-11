@@ -1,0 +1,99 @@
+%%% Document Class %%%
+\documentclass[a4paper,12pt]{article}
+
+%%% Packages %%%
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{enumitem}
+\PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
+\usepackage{url}
+\usepackage{listings}
+
+\title{Plateforme de démonstration de Top 10 OWASP 2017}
+\author{Brendan, Simon et Xavier \\ \textbf{Toute la vie en M1}}
+\date{\today}
+
+%%% Document %%%
+\begin{document}
+
+\lstset{language=Python, breaklines=true}
+
+\maketitle
+
+\section{Introduction}
+Étudiants en Master CSI à l'université de Bordeaux, passionnés de sécurité informatique, c'est tout naturellement que nous avons tenter de relever le défi de présenter de manière ludique le Top 10 des vulnérabilités web les plus répandus selon l'OWASP.
+
+Malgré notre manque d'expérience en développement web, et donc aussi peu à l'aise avec l'application du sujet traité, nous avons néanmoins tenter de mettre en place quelques scenarii de failles et d'attaques "classiques" à travers notre plateforme.
+
+Notre solution est donc disponible à l'adresse suivante : \url{http://54.37.20.200/}.
+Le code source a été rendu public et est consultable sur GitHub : \url{https://github.com/Pamplemousse/owasp-top-10-demo}.
+
+Travaillant avec une équipe restreinte, nous n'avons évidemment pas eu le temps d'exposer l'ensemble des vulnérabilités du Top 10. Nos efforts se sont portés sur :
+\begin{itemize}
+  \item Injection
+  \item Broken Authentication
+  \item Cross-Site Scripting (XSS)
+  \item Insecure Deserialization
+\end{itemize}
+
+Que nous allons brièvement (ou non) présenter ici.
+
+Remarque : beaucoup d'entre elles représentent des concepts génériques, éloignés de toute considération d'implémentation. Nous avons donc du choisir de quelle manière les mettre en place, et bâtir des scenarii cohérents (ressemblant au maximum à une application réelle).
+
+
+\section{Injection}
+On ne compte plus le nombre d'années où les injections sont présentes dans le Top 10. Même si elles peuvent prendre de nombreuses formes, nous avons choisi d'exposer la plus classique d'entre elles : l'injection SQL.
+
+Pour exploiter cette faille, un attaquant manipule une entrée (ici un filtre), pour détourner la requête sous-jacente, et requêter des données sensibles dans la base de données.
+
+La ligne fautive dans le code du serveur :
+\begin{lstlisting}
+cur = get_db().execute("SELECT first_name, last_name, year_of_birth FROM users WHERE year_of_birth LIKE '\%" + year_filter + "%' LIMIT 10")
+\end{lstlisting}
+
+
+\section{Broken Authentication}
+La deuxième faille de sécurité dans le top 10 est celle concernant l'authentification défectueuse (et la gestion des sessions). Derrière ce nom francisé un peu barbare se cache en fait l'un des problèmes les plus communs et connus du grand public : l'utilisation d'un mot de passe trop faible. Parce qu'il n'est pas rare que des employés d'entreprise peu précautionneux utilisent pour mot de passe "juillet2017" ou encore "123456", on comprend pourquoi on répète souvent que le plus gros problème de sécurité informatique est ce qui se trouve entre la chaise et le clavier !
+Des études sont même allées jusqu'à déterminer avec des statistiques quels étaient les 1000 (ou 10 000, ...) mots de passes les plus utilisés dans le monde (voir la liste ici https://github.com/danielmiessler/SecLists/tree/master/Passwords). Mais tester chacun d'entre eux serait très long à la main, les pirates ont plutôt recours à des algorithmes qui vont automatiser la tâche. On parle ici de "bruteforce" : pour donner une image on n'essaie pas de crocheter intelligemment la serrure, mais plutôt de défoncer la porte d'entrée ! Et si la faille est dans le top 2 de l'OWASP, cela prouve bien que ce type d'attaque marche (relativement) assez souvent.
+Ce type de faille est cependant très classique, c'est pourquoi nous avons préféré plutôt présenter sur notre site une autre faille, néanmoins liée au même problème (et présentée également dans l'article PDF de l'OWASP).
+
+L'élément sous-jacent à l'authentification est en effet la gestion des cookies. On ne parle pas ici de biscuits (presque !), mais plutôt de petits fichiers qu'un site web va vous demander de stocker quelques parts sur votre ordinateur. Par exemple, comment fait un site web pour vous connecter automatiquement à votre compte sur le site web sans vous demander de rentrer votre mot de passe, même après 2 mois passés sans être allé sur le site en question ? C'est grâce au cookie ! Lors de votre précédente visite sur la site 2 mois auparavant, le site vous à invité (ou plutôt forcer, généralement sans vous demander votre avis...) à conserver sur votre ordinateur un certain texte dans un fichier qui sert à vous identifier. Une fois que vous vous reconnecter 2 mois plus tard, le site vous demande de lui envoyer le cookie que vous avez stocké, et en le regardant, il s'aperçoit que le cookie correspondant à votre nom de compte ! Il peut ainsi vous connecter automatiquement au site, sans que vous ayez à rentrer de mot de passe.
+Mais alors, on pourrait se demander, pourquoi le site ne stocke-t-il pas simplement le nom de l'utilisateur dans un cookie. Comme ça, après 2 mois passé en dehors du site, vous n'aurez pas besoin de rentrer votre mot de passe, votre ordinateur indiquera simplement au site votre identité en renvoyant le cookie. En lisant la phrase précédente on se rend compte immédiatement du problème : qu'est-ce qui empêche un utilisateur tiers (un méchant pirate) de créer lui même un cookie sur son ordinateur ayant pour valeur votre login utilisateur ? Et bien rien ! Et ce serait un grave problème car le pirate pourrait alors se connecter à n'importe quel compte sans avoir besoin d'aucun mot de passe !
+C'est donc pourquoi le cookie que le site vous invite à garder sur votre ordinateur est beaucoup plus compliqué que ça, c'est une sorte de mot de passe en quelque sorte. Quelque chose qu'un pirate ne pourra pas deviner.
+
+Dans notre site, la vulnérabilité concerne justement la façon dont est généré ce cookie. On utilise une fonction de hashage. Ce genre d'outil utilise un mot d'entrée, et vous retourne une suite incompréhensible de caractères. Par exemple si je donne "toto" à ma fonction de hashage, il pourrait me renvoyer quelque comme ZDunçédn23né"çédn72néeklé12K2lç. Mais ce qui est très fort avec le hashage, c'est que si je change juste une lettre à mon mot de départ, par exemple "totu", alors la fonction va renvoyer quelque chose de complètement différent ! Par exemple aionz9nçNw98neaçN2IL02Eno5E4
+Ainsi pour un pirate, il est très dur de comprendre comment le hash est créé, car il n'a que peut d'information sur la fonction utilisée.
+Pour notre vulnérabilité, on utilise une fonction de hashage classique, le SHA256. On l'applique à la chaîne de caractère du login de l'utilisateur. Si mon login est "toto", on va donc appliquer la fonction de hashage à "toto". Mais c'est un grave problème sécurité ! En effet si un utilisateur arrive à se rendre compte de la façon dont est généré le hash, alors il pourrait usurper l'identité des utilisateurs du site.
+Il lui suffirait de créer lui-même des cookie sur son ordinateur à l'aide du SHA256 et des différents logins des utilisateurs. Par exemple, qu'est-ce qui empêcherait notre méchant pirate d'appliquer la fonction de hashage à la chaîne de caractère "admin" ? Si l'administrateur du site a été peu précautionneux au point de laisser le nom de son login comme étant "admin", alors le pirate pourra alors créer un cookie sur son pc pour usurper l'identité de l’administrateur et ainsi obtenir tous les droits sur le site !
+
+Malheureusement, nous n'avons pas eu le temps de terminer cette page. Espérons que vous aurez apprécier la lecture.
+
+
+\section{Cross-Site Scripting (XSS)}
+Depuis quelques années et l'avènement des clients web contenant beaucoup de javascript, les XSS ne sont plus de simples Injections et méritent leur place dans le Top 10.
+
+En injectant du contenu dans un champ (ou dans notre exemple, directement à travers l'url), un attaquant peut faire exécuter par une personne chargeant la page du code arbitraire, avec pour conséquences possible le vol de session, le téléchargement de fichiers malveillants et bien d'autres...
+
+Ici, l'injection dans un attribut HTML permet d'associer un évènement l'exécution d'un code ennuyeux.
+
+\begin{lstlisting}
+  # la ligne python qui oublie de filtrer les entrees utilisateurs...
+  return redirect(url_for("A7_with_id", id="identifiant-super-unique"))
+
+  # le contenu HTML qui injecte cette entree dans la page
+  <p id="{{ id }}">Votre identifiant : {{ id }}</p>
+\end{lstlisting}
+
+
+\section{Insecure Deserialization}
+En basant de la logique (générant du code) à partir d'entrées utilisateurs, une application prend le risque de donner un point d'entrée à un attaquant. Cela peut s'avérer critique, notamment lorsque cette entrée est mal filtrée...
+
+Ici, en fabriquant astucieusement son entrée, un attaquant peut faire exécuter du code par l'application, résultant de la création d'un shell (une interface en ligne de commande), qui lui donne dès lors un accès privilégié au serveur.
+
+\begin{lstlisting}
+  # en chargeant une entree utilisateur sans en nettoyer le contenu...
+  user = pickle.loads(binascii.unhexlify(ID))
+\end{lstlisting}
+
+\end{document}

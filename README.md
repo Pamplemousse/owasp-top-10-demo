@@ -14,3 +14,9 @@ $ virtualenv myvenv
 $ source myvenv/bin/activate
 (myvenv) pip install -r requirements.txt
 ```
+
+## Generate report
+
+```bash
+pdflatex rapport.tex
+```
